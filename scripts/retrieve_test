@@ -1,0 +1,32 @@
+#!/usr/bin/python
+
+PACKAGE_NAME='pcl_db_test'
+NODE_NAME='pcl_db_retrieve_test'
+
+import roslib; roslib.load_manifest(PACKAGE_NAME)
+import rospy
+import sys
+from sensor_msgs.msg import PointCloud2
+from hybris_c1_msgs.srv import RetrievePointCloud
+
+def timer_callback(event):
+    print 'Calling restore of point cloud'
+    retrieve = rospy.ServiceProxy('/pcl_db/retrieve', RetrievePointCloud)
+    resp = retrieve(timestamp=rospy.Time(1399366453, 700000000), collection="pcls")
+    # , original_timestamp=True
+    if not resp.ok:
+        print("Retrieve failed: %s" % resp.error)
+        rospy.signal_shutdown("FAIL")
+
+def callback(cloud):
+    print("PointCloud restored")
+    rospy.signal_shutdown("EXIT")
+
+def main(argv):
+    rospy.init_node(NODE_NAME, anonymous=False)
+    subscriber = rospy.Subscriber("/fawkes_pcls/db_retrieved", PointCloud2, callback)
+    rospy.Timer(rospy.Duration(1), timer_callback, oneshot=True)
+    rospy.spin()
+
+if __name__ == "__main__":
+    main(sys.argv)

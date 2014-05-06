@@ -1,0 +1,29 @@
+#!/usr/bin/python
+
+PACKAGE_NAME='pcl_db_test'
+NODE_NAME='pcl_db_store_test'
+
+import roslib; roslib.load_manifest(PACKAGE_NAME)
+import rospy
+import sys
+from sensor_msgs.msg import PointCloud2
+from hybris_c1_msgs.srv import StorePointCloud
+
+def callback(cloud):
+    print("Got cloud")
+    store = rospy.ServiceProxy('/pcl_db/store', StorePointCloud)
+    try:
+        store(pointcloud=cloud)
+    except rospy.ServiceException, e:
+        print("Fail: %s" % e)
+        pass
+
+    rospy.signal_shutdown("EXIT")
+
+def main(argv):
+    rospy.init_node(NODE_NAME, anonymous=False)
+    subscriber = rospy.Subscriber("/camera/depth_registered/points", PointCloud2, callback)
+    rospy.spin()
+
+if __name__ == "__main__":
+    main(sys.argv)

@@ -1,0 +1,15 @@
+<package>
+  <description brief="pcl_db_test">
+   Test scripts for rosfawkes pcl-db.
+  </description>
+  <author>Tim Niemueller</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/pcl_db_store_test</url>
+  <depend package="rospy" />
+  <depend package="sensor_msgs" />
+  <depend package="hybris_c1_msgs" />
+
+</package>
+
+
